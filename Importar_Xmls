@@ -1,0 +1,27 @@
+(Importar_Arquivos as text) =>
+// Função para tratar arquivo xml e importar todos os arquivos contidos em uma pasta//
+let    
+    //Importado xml com a codificação 28605 - Latino-9//
+    Fonte = Xml.Tables(File.Contents(Importar_Arquivos), null, 28605),
+    //É realizado a abertura de todas as tags do XML//
+    Pegar_Dados_Xml = Table.ExpandTableColumn(Fonte, "Nfse", {"IdentificacaoNfse", "DadosNfse"}, 
+    {"Nfse.IdentificacaoNfse", "Nfse.DadosNfse"}),
+    //------------------------------------------//    
+    #"Outras Colunas Removidas" = Table.SelectColumns(Pegar_Dados_Xml,{"Nfse.IdentificacaoNfse", "Nfse.DadosNfse"}),
+    //------------------------------------------//
+    Expandir_Xml = Table.ExpandTableColumn(#"Outras Colunas Removidas", "Nfse.IdentificacaoNfse", 
+    {"Numero", "LinkImpressao", "DataEmissao", "StatusNfse"}, 
+    {"Numero", "LinkImpressao", "DataEmissao", "StatusNfse"}),
+     //------------------------------------------//
+    Final_Expansao_Xml = Table.ExpandTableColumn(Expandir_Xml, "Nfse.DadosNfse", 
+    {"PrestadorCnpj", "PrestadorRazaoSocial", "Discriminacao", "ValorServicos", "ValorIss", "ValorInss"}, 
+    {"PrestadorCnpj", "PrestadorRazaoSocial", "Discriminacao", "ValorServicos", "ValorIss", "ValorInss"}),
+    //Alteração tipos de dados//
+    Tipo_Alterado = Table.TransformColumnTypes(Final_Expansao_Xml,{{"DataEmissao", type datetime}, {"Discriminacao", type text}, 
+    {"PrestadorRazaoSocial", type text}, {"PrestadorCnpj", type text}, {"LinkImpressao", type text}, 
+    {"StatusNfse", Int64.Type}, {"Numero", Int64.Type}}),
+     //------------------------------------------//
+    Tipo_Alterado_Localidade = Table.TransformColumnTypes(Tipo_Alterado, {{"ValorServicos", type number}, 
+    {"ValorIss", type number}, {"ValorInss", type number}}, "en-US")
+in
+    Tipo_Alterado_Localidade
