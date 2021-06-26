@@ -1,0 +1,46 @@
+/*Função para Percorrer cada linha da Tabela 
+para identificar se um item da lista está contido na linha de texto
+*/
+(
+    Tabela as table,
+
+    // esses parametros NÃO DEVEM SER INFORMADOS
+    optional ItensRestantes as number,
+    optional TabelaFinal as table, 
+    optional iteracoes as number
+) =>
+
+let
+    //Adicionar linhas ao loop e verificar quantas linhas possui a lista de possibilidades
+    Iteracao        = if iteracoes = null then 1 else iteracoes+1,
+    ItensTotais     = List.Count(Possibilidade),
+    //Filtrar apenas os dados que contém no texto os itens contidos na lista
+    TabelaFiltrada  = Table.SelectRows(Tabela, each     Text.Contains([Discriminacao], Possibilidade{Iteracao - 1})),
+    //Adicionar nova coluna a tabela contendo a tradução da lista Possibilidades que está inserida na lista Obra
+    TabelaFiltradaIndice = Table.AddColumn(TabelaFiltrada, "Indice", each Obra{Iteracao - 1}),
+
+    //Tabela com as linhas que não foram encontradas no loop
+    TabelaResto     = Table.SelectRows(Tabela, each not Text.Contains([Discriminacao], Possibilidade{Iteracao - 1}) ),
+
+    /*Feito a repetição do Loop até que não tenhamos 
+    nenhum item restante na lista de possibilidades.
+    */
+    ItensRestantes  = 
+                    if Iteracao = 1 
+                    then ItensTotais - 1 
+                    else ItensRestantes - 1,
+
+    fim             = 
+                    if Iteracao = 1 
+                    then Table.Combine({#table({},{{}}), TabelaFiltradaIndice})
+                    else Table.Combine({TabelaFinal, TabelaFiltradaIndice})                    
+                    ,
+
+    out             = 
+                    if ItensRestantes = 0 
+                    then Table.Skip(fim,1)
+                    else @formula(TabelaResto, ItensRestantes, fim, Iteracao)
+
+
+in
+    out
