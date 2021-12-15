@@ -27,8 +27,7 @@ let
             , metadados = [
                 Documentation.Name  = "ConcatenaLinhasEmUnicoTexto",
                 Documentation.Description = "
-                    by Joviano Silveira (www.joviano.com)
-                    Pegar primeira coluna de uma tabela, e transformar em uma string concatenando todos os textos. Isso com ou sem delimitador",
+                     Pegar primeira coluna de uma tabela, e transformar em uma string concatenando todos os textos. Isso com ou sem delimitador",
                 
                 Documentation.Examples = {
 
