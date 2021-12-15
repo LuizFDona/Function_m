@@ -26,7 +26,7 @@ let
 
             , metadados = [
                 Documentation.Name  = "IdentificaTipoDadosCadaColunaTabela",
-                Documentation.Description = "by Joviano Silveira (www.joviano.com) => Função identifica e (se quiser) filtra os tipos de dados de uma tabela",
+                Documentation.Description = "Função identifica e (se quiser) filtra os tipos de dados de uma tabela",
                 Documentation.Examples = {
 
                     // exemplo 01
