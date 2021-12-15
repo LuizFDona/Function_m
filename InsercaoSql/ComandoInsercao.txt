@@ -1,0 +1,8 @@
+let
+    Fonte = Table.RemoveColumns(MovimentoOZ, {"Linha", "LinhaMin"}),
+    #"Personalização Adicionada" = Table.AddColumn(Fonte, "DataHora_Gravacao", each DateTime.LocalNow(), type datetime),
+    Personalizar1 = Table.Buffer(PreparaTabelaInsert("TABELA_XYZ",#"Personalização Adicionada")),
+    Anterior = Table.SelectColumns(Personalizar1,{"COMANDO"}),
+    Personalizar2 = ConcatenaLinhasEmUnicoTexto(Anterior,"")
+in
+    Personalizar2
